@@ -1,0 +1,116 @@
+ DITHER by Robert Rayment  Notes.txt   Nov 2002
+ 
+ 1.  Dither can be run in VB or VB+ASM
+     
+     For those new to ASM see:
+     "NASM Editor, Assembler & Tutorial" on PSC
+     by Robert Rayment
+ 
+     Also on A1VBCode.com plus the assembler nasmw.exe.
+     
+     The asm dither.bin file is used here and must
+     be in the same folder as the program.
+ 
+ 2.
+     If the screen resolution is changed click the Resize
+     button.
+ 
+     All the effects are on separate command buttons, this
+     leads to some repetition of code but is easiest to
+     add another button with different effects if wanted.
+ 
+ 3.  Dithering
+ 
+ Dithering is a method of producing pictures using
+ only 2 colored dots.  Commonly used in newsprint.
+ Provided color & high resolution is not required but
+ a recognizable picture is wanted, 2-color dithering
+ can give a reduction in bmp filesize of up to nearly 32
+ times depending on the original ie 4,8,24 or 32 bpp.
+ 
+ The best dithering depends on the original colors, resolution
+ and the effect wanted. Some give good representation and some
+ are iconic.
+ 
+ Differences between the methods is quite subtle, the most 
+ obvious being the amount of 'tearing' ie false lines in
+ areas of similar color.
+
+ If the default divisors are taken and Stucki if is excluded then
+ the calculations can be done by shifting and subtraction in ASM
+ but with Stucki and allowing variations in the divisor this is
+ not possible.
+ 
+ 
+ 4. Patterning
+ 
+ A pattern is made by taking a rectangle from the original
+ picture, finding the average grey value (in range 0-255) 
+ and if this lies between two limits (eg HalfToneLimits) 
+ then place a white and black dot pattern for one of those 
+ limits.  Each limit has its own dot pattern.  This prog 
+ makes all the dots black and adds white dots accordingly.
+ 
+ 5. Black & White
+ 
+ '''''''''''''''''''''''''''''''''''''''''''''''''
+ Black & White  variable threshold, 128 default
+ 
+ '''''''''''''''''''''''''''''''''''''''''''''''''
+ 
+ 6. Dithers
+ 
+ "Bitmapped Graphics" by Steve Rimmer,
+ Windcrest/McGraw-Hill, ISBN 0-8306-3558-0
+ 
+ Variable divisors  ( From 1 x default to 3 x default)
+ 
+ Floyd-SteinbergA
+    x 3
+    3 2  /8   (8=default)
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ Floyd-SteinbergB
+   x 7
+ 3 5 1   / 16
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ Stucki
+     x 8 4
+ 2 4 8 4 2
+ 1 2 4 2 1  / 42
+ This one is slower than Floyd-Steinberg since it can't be done with
+ bit shifts and subtraction.
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ Burkes
+     x 8 4
+ 2 4 8 4 2  / 32
+ This one is a compromise between Floyd-Steinberg and Stucki,
+ spreads error over more pixels but still can be done with
+ shifts and subtractions if only the default divisor is taken.
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ Sierra
+     x 5 3
+ 2 4 5 4 2
+   2 3 2    / 32
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ Jarvis, Judice and Ninke filter:
+     x 7 5
+ 3 5 7 5 3
+ 1 3 5 3 1  / 48
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ 
+ 7.  Patterns
+ 
+ "Principles of Interactive Graphics" by W M Newman et al,
+  McGraw-Hill, ISBN 0-07-046338-7
+ 
+  Variable limits   (limits times .5 to 1.5)
+ 
+ HalfTone    <25,50,75,100,125,150,175,200,230,>230
+ HalfTone 2  <25,50,75,100,125,150,175,200,230,>230
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ Line   <60,120,180,>180
+ Line 2 <25,50,75,100,125,150,175,200,230,>230
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ Random   <25,50,75,100,125,150,175,200,230,>230
+ ''''''''''''''''''''''''''''''''''''''''''''''''
+ 
